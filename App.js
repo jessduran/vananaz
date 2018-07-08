@@ -1,13 +1,61 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { 
+  StyleSheet, 
+  Text, 
+  TextInput,
+  TouchableOpacity
+  View 
+} from 'react-native';
 
 export default class App extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      email: '',
+      password: '',
+    }
+
+    this.handleOnChangeEmail = this.handleOnChangeEmail.bind(this);
+    this.handleOnChangePassword = this.handleOnChangePassword.bind(this);
+    this.handleSigninButtonPressed = this.handleSigninButtonPressed.bind(this);
+  }
+
+  handleOnChangeEmail(email) {
+    this.setState({ email })
+  }
+
+  handleOnChangePassword(password) {
+    this.setState({ password })
+  }
+
+
   render() {
     return (
       <View style={styles.container}>
-        <Text>Open up App.js to start working on your app!</Text>
-        <Text>Changes you make will automatically reload.</Text>
-        <Text>Shake your phone to open the developer menu.</Text>
+        <View>
+          <Text>Email</Text>
+          <TextInput
+              label = "Email"
+              keyboardType = "email-address"
+              placeholder = "Input email address"
+              value = {this.state.email}
+              onChangeText={(email)=>{this.handleOnChangeEmail(email)}}
+          />
+        </View>
+        <View>
+          <Text>Password</Text>
+          <TextInput
+            label="Password"
+            placeholder = "Input password"
+            value = {this.state.value}
+            onChangeText = {(password) => {this.handleOnChangePassword(password)}}
+            secureTextEntry
+          />
+        </View>
+        <TouchableOpacity onPress={this.handleSigninButtonPressed}>
+          <Text>Sign In</Text>
+        </TouchableOpacity>
       </View>
     );
   }
