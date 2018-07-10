@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Dimensions,
   Image,
   StyleSheet,
   Text,
@@ -7,7 +8,6 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import { responsiveHeight } from 'react-native-responsive-dimensions';
 
 const image = require('./logo.png');
 
@@ -40,10 +40,12 @@ export default class App extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Image
-          style={styles.image}
-          source={image}
-        />
+        <View style={styles.imageContainer}>
+          <Image
+            style={styles.image}
+            source={image}
+          />
+        </View>
         <View style={styles.form}>
           <View style={styles.card}>
             <Text style={styles.label}>Email</Text>
@@ -128,7 +130,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     marginVertical: 15,
-    marginHorizontal: 15,
+    paddingHorizontal: 15,
   },
   errorText: {
     color: 'red',
@@ -136,14 +138,18 @@ const styles = StyleSheet.create({
     paddingTop: 3
   },
   form: {
-    alignSelf: 'flex-end',
     width: '100%',
-    paddingTop: 50
   },
   image: {
-    width: '100%',
-    height: responsiveHeight(30),
+    alignSelf: 'center',
+    width: Dimensions.get('window').width - 40,
+    height: Dimensions.get('window').height / 3.5,
     marginVertical: 5,
+  },
+  imageContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: Dimensions.get('window').height / 2,
   },
   input: {
     color: '#000',
