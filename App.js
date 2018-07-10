@@ -3,6 +3,8 @@ import {
   Alert,
   Dimensions,
   Image,
+  KeyboardAvoidingView,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -27,6 +29,7 @@ export default class App extends React.Component {
     this.handleOnChangeEmail = this.handleOnChangeEmail.bind(this);
     this.handleOnChangePassword = this.handleOnChangePassword.bind(this);
     this.handleSigninButtonPressed = this.handleSigninButtonPressed.bind(this);
+    this.handleEmailEditing = this.handleEmailEditing.bind(this);
   }
 
   handleOnChangeEmail(email) {
@@ -38,24 +41,19 @@ export default class App extends React.Component {
   }
 
   handleSigninButtonPressed() {
-    this.isEmailValid();
-    this.isPasswordValid();
-
-    if (this.state.errorEmail.length == 0 && this.state.errorPassword.length == 0) {
       Alert.alert(
           '',
           'Login success!',
           [{text: 'OK', onPress: () => {
-              console.log('Login is successful.');
+              console.log('Login success!');
           }}],
           { cancelable: false }
-        )
-    }
+      )
   }
 
-  isEmailValid() {
-    const email = this.state.email;
+  handleEmailEditing() {
     const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/ ;
+    const email = this.state.email;
 
     if (email.length === 0) {
       this.setState({
@@ -71,12 +69,13 @@ export default class App extends React.Component {
     }
     else {
       this.setState({
-        errorEmail: ''
+        errorEmail: '',
+        disabled: false
       })
     }
   }
 
-  isPasswordValid() {
+  handlePasswordEditing() {
     const passwordLength = this.state.password.length;
     if (passwordLength < 6 || passwordLength > 12) {
       this.setState({
@@ -87,68 +86,76 @@ export default class App extends React.Component {
     else {
       this.setState({
         errorPassword: '',
-        disabled: true,
+        disabled: false,
       })
     }
   }
 
   render() {
     return (
-      <View style={styles.container}>
-        <View style={styles.imageContainer}>
-          <Image
-            style={styles.image}
-            source={image}
-          />
-        </View>
-        <View style={styles.form}>
-          <View style={styles.card}>
-            <Text style={styles.label}>Email</Text>
-            <View style={styles.inputContainer}>
-              <TextInput
-                  label = "Email"
-                  keyboardType = "email-address"
-                  placeholder = "Input email address"
-                  placeholderStyle = {styles.placeholder}
-                  value = {this.state.email}
-                  style = {styles.input}
-                  onChangeText={(email)=>{this.handleOnChangeEmail(email)}}
-              />
-            </View>
-            <Text style={styles.errorText}>
-              {this.state.errorEmail}
-            </Text>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior="padding"
+      >
+        <ScrollView>
+          <View style={styles.imageContainer}>
+            <Image
+              style={styles.image}
+              source={image}
+            />
           </View>
-
-          <View style={styles.card}>
-            <Text style={styles.label}>Password</Text>
-            <View style={styles.inputContainer}>
-              <TextInput
-                label = "Password"
-                placeholder = "Input password"
-                placeholderStyle = {styles.placeholder}
-                value = {this.state.password}
-                style = {styles.input}
-                onChangeText={(password)=>{this.handleOnChangePassword(password)}}
-                secureTextEntry
-              />
-            </View>
-            <Text style={styles.errorText}>
-              {this.state.errorPassword}
-            </Text>
-          </View>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity disabled={this.state.disabled}
-              style={styles.button}
-              onPress={this.handleSigninButtonPressed}>
-              <Text style={styles.buttonText}>
-                Sign In
+          <View style={styles.form}>
+            <View style={styles.card}>
+              <Text style={styles.label}>Email</Text>
+              <View style={styles.inputContainer}>
+                <TextInput
+                    label = "Email"
+                    keyboardType = "email-address"
+                    placeholder = "Input email address"
+                    placeholderStyle = {styles.placeholder}
+                    value = {this.state.email}
+                    style = {styles.input}
+                    onChangeText={(email)=>{this.handleOnChangeEmail(email)}}
+                    onEndEditing={(email)=>{this.handleEmailEditing()}}
+                    underlineColorAndroid='rgba(0,0,0,0)'
+                />
+              </View>
+              <Text style={styles.errorText}>
+                {this.state.errorEmail}
               </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+            </View>
 
-      </View>
+            <View style={styles.card}>
+              <Text style={styles.label}>Password</Text>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  label = "Password"
+                  placeholder = "Input password"
+                  placeholderStyle = {styles.placeholder}
+                  value = {this.state.password}
+                  style = {styles.input}
+                  onChangeText={(password)=>{this.handleOnChangePassword(password)}}
+                  onEndEditing={(password)=>{this.handlePasswordEditing()}}
+                  secureTextEntry
+                  underlineColorAndroid='rgba(0,0,0,0)'
+                />
+              </View>
+              <Text style={styles.errorText}>
+                {this.state.errorPassword}
+              </Text>
+            </View>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity disabled={this.state.disabled}
+                style={styles.button}
+                onPress={this.handleSigninButtonPressed}>
+                <Text style={styles.buttonText}>
+                  Sign In
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     );
   }
 }
@@ -197,9 +204,10 @@ const styles = StyleSheet.create({
   },
   image: {
     alignSelf: 'center',
-    width: Dimensions.get('window').width - 40,
-    height: Dimensions.get('window').height / 3.5,
+    width: '100%',
+    height: '100%',
     marginVertical: 5,
+    resizeMode: 'contain',
   },
   imageContainer: {
     alignItems: 'center',
