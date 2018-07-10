@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Alert,
   Dimensions,
   Image,
   StyleSheet,
@@ -18,6 +19,9 @@ export default class App extends React.Component {
     this.state = {
       email: '',
       password: '',
+      errorEmail: '',
+      errorPassword: '',
+      disabled: false,
     }
 
     this.handleOnChangeEmail = this.handleOnChangeEmail.bind(this);
@@ -34,7 +38,58 @@ export default class App extends React.Component {
   }
 
   handleSigninButtonPressed() {
-    //handle signin
+    this.isEmailValid();
+    this.isPasswordValid();
+
+    if (this.state.errorEmail.length == 0 && this.state.errorPassword.length == 0) {
+      Alert.alert(
+          '',
+          'Login success!',
+          [{text: 'OK', onPress: () => {
+              console.log('Login is successful.');
+          }}],
+          { cancelable: false }
+        )
+    }
+  }
+
+  isEmailValid() {
+    const email = this.state.email;
+    const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/ ;
+
+    if (email.length === 0) {
+      this.setState({
+        errorEmail: 'email is required',
+        disabled: true,
+      })
+    }
+    else if(reg.test(email) == false){
+      this.setState({
+        errorEmail: 'not correct format for email address',
+        disabled: true,
+      })
+    }
+    else {
+      this.setState({
+        errorEmail: ''
+      })
+    }
+  }
+
+  isPasswordValid() {
+    const passwordLength = this.state.password.length;
+    if (passwordLength < 6 || passwordLength > 12) {
+      this.setState({
+        errorPassword: 'please use at least 6 - 12 characters',
+        disabled: true,
+      });
+    }
+    else {
+      this.setState({
+        errorPassword: '',
+        disabled: true,
+      })
+    }
   }
 
   render() {
@@ -61,7 +116,7 @@ export default class App extends React.Component {
               />
             </View>
             <Text style={styles.errorText}>
-              Error
+              {this.state.errorEmail}
             </Text>
           </View>
 
@@ -79,11 +134,11 @@ export default class App extends React.Component {
               />
             </View>
             <Text style={styles.errorText}>
-              Error
+              {this.state.errorPassword}
             </Text>
           </View>
           <View style={styles.buttonContainer}>
-            <TouchableOpacity
+            <TouchableOpacity disabled={this.state.disabled}
               style={styles.button}
               onPress={this.handleSigninButtonPressed}>
               <Text style={styles.buttonText}>
