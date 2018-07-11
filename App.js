@@ -30,6 +30,7 @@ export default class App extends React.Component {
     this.handleOnChangePassword = this.handleOnChangePassword.bind(this);
     this.handleSigninButtonPressed = this.handleSigninButtonPressed.bind(this);
     this.handleEmailEditing = this.handleEmailEditing.bind(this);
+    this.renderButton = this.renderButton.bind(this);
   }
 
   handleOnChangeEmail(email) {
@@ -41,14 +42,14 @@ export default class App extends React.Component {
   }
 
   handleSigninButtonPressed() {
+    if(!this.state.disabled){
       Alert.alert(
+          'Login Success',
           '',
-          'Login success!',
-          [{text: 'OK', onPress: () => {
-              console.log('Login success!');
-          }}],
-          { cancelable: false }
+          [{text: 'OK', onPress: () => console.log('OK Pressed')},],
+          { cancelable: true }
       )
+    }
   }
 
   handleEmailEditing() {
@@ -89,6 +90,26 @@ export default class App extends React.Component {
         disabled: false,
       })
     }
+  }
+
+  renderButton() {
+    return this.state.disabled
+      ?
+      (<TouchableOpacity disabled={this.state.disabled}
+        style={[styles.button, styles.buttonColor]}
+        onPress={this.handleSigninButtonPressed}>
+        <Text style={styles.buttonText}>
+          Sign In
+        </Text>
+      </TouchableOpacity>)
+      :
+      (<TouchableOpacity disabled={this.state.disabled}
+        style={styles.button}
+        onPress={this.handleSigninButtonPressed}>
+        <Text style={styles.buttonText}>
+          Sign In
+        </Text>
+      </TouchableOpacity>);
   }
 
   render() {
@@ -145,13 +166,7 @@ export default class App extends React.Component {
               </Text>
             </View>
             <View style={styles.buttonContainer}>
-              <TouchableOpacity disabled={this.state.disabled}
-                style={styles.button}
-                onPress={this.handleSigninButtonPressed}>
-                <Text style={styles.buttonText}>
-                  Sign In
-                </Text>
-              </TouchableOpacity>
+              {this.renderButton()}
             </View>
           </View>
         </ScrollView>
@@ -167,6 +182,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#7c57bb',
     borderRadius: 5,
     height: 30,
+  },
+  buttonColor: {
+    backgroundColor: '#c3c3c3',
   },
   buttonContainer: {
     height: 50,
@@ -193,6 +211,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginVertical: 15,
     paddingHorizontal: 15,
+    backgroundColor: '#faf8ff',
   },
   errorText: {
     color: 'red',
